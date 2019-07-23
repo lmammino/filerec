@@ -1,0 +1,36 @@
+{
+  "name": "filerec",
+  "version": "1.0.0",
+  "description": "Easily spin up a local http server to accept files from your lan",
+  "main": "src/server",
+  "bin": {
+    "filerec": "src/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "http",
+    "file",
+    "file receiver",
+    "file server",
+    "transfer",
+    "transfer file",
+    "lan files",
+    "file sharing"
+  ],
+  "author": "Luciano Mammino",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
+  },
+  "dependencies": {
+    "enquirer": "^2.3.1",
+    "request-ip": "^2.1.3"
+  }
+}
