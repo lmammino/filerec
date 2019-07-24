@@ -5,11 +5,13 @@
 const createServer = require('./server')
 const promptAccepter = require('./promptAccepter')
 
-const server = createServer({
-  accepter: promptAccepter
-})
+async function run () {
+  const server = createServer({
+    accepter: promptAccepter
+  })
 
-server.on('listening', () => {
-  console.log(`Listening on port ${server.address().port}`)
-})
-server.listen({ host: '0.0.0.0', port: 0 })
+  const address = await server.listen(0, '0.0.0.0')
+  console.log(`Listening on port ${address}`)
+}
+
+run()
