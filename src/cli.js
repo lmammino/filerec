@@ -2,16 +2,15 @@
 
 'use strict'
 
-const createServer = require('./server')
-const promptAccepter = require('./promptAccepter')
+const createServer = require('./server/server')
+const promptAccepter = require('./server/promptAccepter')
 
 async function run () {
-  const server = createServer({
+  const server = await createServer({
     accepter: promptAccepter
   })
 
-  const address = await server.listen(0, '0.0.0.0')
-  console.log(`Listening on port ${address}`)
+  await server.listen(0, '0.0.0.0')
 }
 
 run()
