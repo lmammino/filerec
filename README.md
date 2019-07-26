@@ -1,6 +1,6 @@
 # filerec
 
-![Filerec logo](/logo/filerec.png)
+![Filerec logo](/logo/filerec.svg)
 
 Spin up a local http server to securely accept files from friends and colleagues on the same lan or wan.
 
