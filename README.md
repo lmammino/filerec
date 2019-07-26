@@ -1,8 +1,8 @@
-# filerec
+<p align="center">
+  <img src="/logo/filerec.svg" alt="Filerec logo"/>
+</p>
 
-![Filerec logo](/logo/filerec.svg)
-
-Spin up a local http server to securely accept files from friends and colleagues on the same lan or wan.
+<p align="center"><strong>Local HTTP 1.1 server to securely accept files from friends and colleagues on the same lan or wan.</strong></p>
 
 ...
 
