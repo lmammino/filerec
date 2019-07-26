@@ -50,6 +50,11 @@ async function createServer (opts = {}) {
 
   const server = Fastify({ logger: options.logger })
 
+  // adds support for binary files transfer
+  server.addContentTypeParser('application/octet-stream', async function (req) {
+    return req
+  })
+
   server.get('/', async (req, reply) => {
     return 'Hello World'
   })
@@ -60,7 +65,6 @@ async function createServer (opts = {}) {
   })
 
   server.post('/file', async (req, reply) => {
-    console.log(req.headers)
     const iv = Buffer.from(req.headers['x-encryption-iv'], 'base64')
     const sealedKey = Buffer.from(req.headers['x-sealed-key'], 'base64')
     const hasFilename = typeof req.headers['x-filename'] !== 'undefined'

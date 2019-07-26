@@ -27,6 +27,8 @@ SEALED_KEY=$(echo -ne "${KEY}" | openssl rsautl -encrypt -oaep -pubin -inkey ${S
 # send the file through curl
 openssl enc -e -aes-256-cbc -nosalt -iv "${IV_HEX}" -K "${KEY}" -in "${FILENAME}" | \
 curl -XPOST \
+  --data-binary @- \
+  -H "Content-Type: application/octet-stream" \
   -H "X-Sealed-Key: ${SEALED_KEY}" \
   -H "X-Encryption-IV: ${IV_B64}" \
   -H "X-Filename: ${FILENAME}" \
