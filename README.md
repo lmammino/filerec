@@ -2,7 +2,7 @@
   <img src="/logo/filerec.svg" alt="Filerec logo"/>
 </p>
 
-<p align="center"><strong>Local HTTP 1.1 server to securely accept files from friends and colleagues on the same lan or wan.</strong></p>
+<p align="center"><strong>Local HTTP 1.1 server to securely receive files from friends and colleagues on the same lan or wan.</strong></p>
 
 ...
 
