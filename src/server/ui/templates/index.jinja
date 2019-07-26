@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="description" content="Local HTTP 1.1 server to securely receive files from friends and colleagues on the same lan or wan.">
+  <meta name="author" content="Luciano Mammino">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+  {% include "_partials/styles.jinja" %}
+  <link href="https://unpkg.com/prismjs@1.17.1/themes/prism-tomorrow.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container" style="padding:2em auto; background: white;">
+    <section class="header">
+      <div class="svg-container" style="margin:1em auto; max-width:300px; text-align:center">
+        {% include "_partials/logo.jinja" %}
+      </div>
+      <p style="text-align: center">
+        <p class="title" style="text-align: center">Running on <strong>{{ serverName }}</strong></p>
+      </p>
+    </section>
+
+    <section class="send-file-client">
+      <h4 class="title">## <strong>Send a file with the official filerec client</strong></h4>
+      <p class="desc">If you have a recent version of <code>node.js</code> (and <code>npx</code>) in your system you can send one or more files as follows:</p>
+      <pre><code class="language-bash">npx filerec send {{ serverPath }} path/to/file1 path/to/file2 ...</code></pre>
+
+      <p class="desc">Alternatively you can <a href="https://github.com/lmammino/filerec/blob/master/README.md#install">install</a> the <code>filerec</code> command line utility in your system and run:</p>
+      <pre><code class="language-bash">filerec send {{ serverPath }} path/to/file1 path/to/file2 ...</code></pre>
+    </section>
+
+    <section class="send-file-curl">
+      <h4 class="title">## <strong>Send a file with curl</strong></h4>
+      <p class="desc">If you want to go <i>hardcore</i> and send a file without using the official client, you can send a file by following the steps here. You will need <code>curl</code>, <code>openssl</code> and <code>bash</code>. Make sure to change the value of <code>FILENAME</code> with the path of the actual filename you want to transfer.</p>
+<pre><code class="language-bash">FILENAME="/some/file" # change this
+SERVER="http://{{ serverPath }}"
+
+# get server public key
+SERVER_KEY="/tmp/filrerec-key-$(date +%s).pem"
+curl "${SERVER}/key" > "${SERVER_KEY}"
+
+# generate random symmetric key and initialization vector
+KEY=$(openssl rand -hex 32)
+IV=$(openssl rand 16)
+IV_B64=$(echo -ne "${IV}" | base64)
+IV_HEX=$(echo -ne "${IV}" | xxd -ps)
+
+# encrypt the key with server public key
+SEALED_KEY=$(echo -ne "${KEY}" | openssl rsautl -encrypt -oaep -pubin -inkey ${SERVER_KEY} | base64)
+
+# encrypt the file and send it with curl
+openssl enc -e -aes-256-cbc -nosalt -iv "${IV_HEX}" -K "${KEY}" -in "${FILENAME}" | \
+curl -XPOST \
+  --data-binary @- \
+  -H "Content-Type: application/octet-stream" \
+  -H "X-Sealed-Key: ${SEALED_KEY}" \
+  -H "X-Encryption-IV: ${IV_B64}" \
+  -H "X-Filename: ${FILENAME}" \
+  "${SERVER}/file"</code></pre>
+    </section>
+
+    <hr/>
+    <p><small>Filerec is developed by <a href="https://github.com/lmammino">@lmammino</a> and released under <a href="https://github.com/lmammino/filerec/blob/master/LICENSE">MIT license</a>. Checkout the <a href="https://github.com/lmammino/filerec">GitHub repository</a>.</small></p>
+  </div>
+
+  <script src="https://unpkg.com/prismjs@1.17.1/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>

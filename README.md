@@ -2,7 +2,7 @@
   <img src="/logo/filerec.svg" alt="Filerec logo"/>
 </p>
 
-<p align="center"><strong>Local HTTP 1.1 server to securely receive files from friends and colleagues on the same lan or wan.</strong></p>
+<p align="center"><strong>Local HTTP 1.1 server to securely receive files from friends and colleagues on the local network.</strong></p>
 
 ...
 
@@ -26,7 +26,7 @@ IV_HEX=$(echo -ne "${IV}" | xxd -ps)
 # encrypt the key with server public key
 SEALED_KEY=$(echo -ne "${KEY}" | openssl rsautl -encrypt -oaep -pubin -inkey ${SERVER_KEY} | base64)
 
-# send the file through curl
+# encrypt the file and send it with curl
 openssl enc -e -aes-256-cbc -nosalt -iv "${IV_HEX}" -K "${KEY}" -in "${FILENAME}" | \
 curl -XPOST \
   --data-binary @- \

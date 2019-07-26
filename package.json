@@ -1,7 +1,7 @@
 {
   "name": "filerec",
   "version": "1.0.0",
-  "description": "Easily spin up a local http server to accept files from your lan",
+  "description": "Local HTTP 1.1 server to securely receive files from friends and colleagues on the local network",
   "main": "src/server",
   "bin": {
     "filerec": "src/cli.js"
@@ -32,9 +32,12 @@
   "dependencies": {
     "enquirer": "^2.3.1",
     "fastify": "^2.6.0",
+    "fastify-static": "^2.5.0",
     "make-promises-safe": "^5.0.0",
     "mkdirp": "^0.5.1",
+    "nunjucks": "^3.2.0",
     "pino-colada": "^1.4.5",
+    "point-of-view": "^3.5.0",
     "readable-stream": "^3.4.0",
     "update-notifier": "^3.0.1",
     "yargs": "^13.3.0"

@@ -4,6 +4,9 @@ const os = require('os')
 const fs = require('fs')
 const path = require('path')
 const Fastify = require('fastify')
+const pointOfView = require('point-of-view')
+const fastifyStatic = require('fastify-static')
+const nunjucks = require('nunjucks')
 const { pipeline } = require('readable-stream')
 const mkdirp = require('mkdirp')
 const crypto = require('../utils/crypto')
@@ -55,8 +58,27 @@ async function createServer (opts = {}) {
     return req
   })
 
+  // configure and register template system
+  const templatesPath = path.join(__dirname, 'ui', 'templates')
+  server.register(pointOfView, {
+    engine: {
+      nunjucks
+    },
+    templates: templatesPath
+  })
+
+  // register static files
+  server.register(fastifyStatic, {
+    root: path.join(__dirname, 'ui', 'public'),
+    prefix: '/public/'
+  })
+
   server.get('/', async (req, reply) => {
-    return 'Hello World'
+    reply.view('index.jinja', {
+      title: `Filerec @ ${options.serverName}`,
+      serverName: options.serverName,
+      serverPath: req.hostname
+    })
   })
 
   server.get('/key', async (req, reply) => {
