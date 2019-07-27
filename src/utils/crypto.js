@@ -2,6 +2,7 @@
 
 const crypto = require('crypto')
 
+// create key pair for the server
 function createKeyPair () {
   const passphrase = crypto.randomBytes(32).toString('hex').toUpperCase()
   const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
@@ -25,6 +26,7 @@ function createKeyPair () {
   }
 }
 
+// create decipher stream for the server
 function createDecipherStream (sealedKey, privateKey, passphrase, iv) {
   const pk = crypto.createPrivateKey({
     key: privateKey,
@@ -40,7 +42,31 @@ function createDecipherStream (sealedKey, privateKey, passphrase, iv) {
   return stream
 }
 
+// create iv for the client
+function createIv () {
+  return crypto.randomBytes(16)
+}
+
+// create symmetric key for the client
+function createSymmetricKey () {
+  return crypto.randomBytes(32)
+}
+
+// create sealed key for the client
+function createSealedKey (symmetricKey, serverPublicKey) {
+  return crypto.publicEncrypt(serverPublicKey, symmetricKey)
+}
+
+// create an encryption stream for the client
+function createCipherStream (symmetricKey, iv) {
+  return crypto.createCipheriv('aes-256-cbc', symmetricKey, iv)
+}
+
 module.exports = {
   createKeyPair,
-  createDecipherStream
+  createDecipherStream,
+  createIv,
+  createSymmetricKey,
+  createSealedKey,
+  createCipherStream
 }

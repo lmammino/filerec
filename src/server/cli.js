@@ -6,14 +6,14 @@ const assert = require('assert')
 const PinoColada = require('pino-colada')
 const { pipeline } = require('readable-stream')
 
-const createServer = require('./server')
+const createServer = require('./')
 const promptAccepter = require('./promptAccepter')
 
-async function cmd (args) {
+async function cmd (argv) {
   // once we run, every non handled promise will make the process crash
   require('make-promises-safe')
 
-  const server = await startServer(args)
+  const server = await startServer(argv)
 
   return server
 }
@@ -111,13 +111,6 @@ module.exports = {
         alias: 'P',
         default: false,
         describe: 'Prints pretty logs with lots of colors and emojis'
-      }
-    )
-    .option(
-      'prefix', {
-        type: 'string',
-        alias: 'r',
-        describe: 'Mounts all the endpoints under a given prefix'
       }
     )
     .option(
