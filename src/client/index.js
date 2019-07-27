@@ -24,19 +24,20 @@ async function sendFile (server, file, options = {}) {
   const { size } = fs.statSync(file)
   const fileStream = fs.createReadStream(file)
   const encryptionStream = crypto.createCipherStream(symmetricKey, iv)
+  const httpStream = got.stream.post(`${server}/file`, { headers })
 
   const request = pumpify(
     fileStream,
     encryptionStream,
-    got.stream.post(`${server}/file`, { headers })
+    httpStream
   )
 
-  let loaded = 0
-  fileStream.on('data', (chunk) => {
-    loaded += chunk.length
-    request.emit('progress', { current: chunk.length, total: size, loaded })
-  })
+  // hack to make got understand the size of the file
   request.size = size
+
+  // propagates http events
+  httpStream.on('request', (request) => request.emit('started', request))
+  httpStream.on('uploadProgress', (progress) => request.emit('progress', progress))
 
   return request
 }

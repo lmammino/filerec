@@ -25,6 +25,10 @@ async function cmd (argv) {
 
   // TODO use client function to send the file and show progress bar
   console.log({ host, file })
+
+  const transferStream = await client.sendFile(host, file)
+
+  transferStream.on('progress', (progress) => console.log('progress', progress, transferStream.size))
 }
 
 module.exports = {

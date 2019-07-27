@@ -35,8 +35,8 @@ function createDecipherStream (sealedKey, privateKey, passphrase, iv) {
     passphrase,
     padding: crypto.constants.RSA_PKCS1_OAEP_PADDING
   })
-  const key = crypto.privateDecrypt(pk, sealedKey).toString()
-  const stream = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'hex'), iv)
+  const key = crypto.privateDecrypt(pk, sealedKey)
+  const stream = crypto.createDecipheriv('aes-256-cbc', key, iv)
   stream.setAutoPadding(false)
 
   return stream
