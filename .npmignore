@@ -94,3 +94,4 @@ typings/
 received-files/
 logo/
 *.test.js
+src/tests_coverage_map.js
