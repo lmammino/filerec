@@ -36,7 +36,7 @@ tap.test('crypto.createIv creates a new random initialization vector', (t) => {
 tap.test('crypto.createSymmetricKey creates a new random symmetric key', (t) => {
   const symmetricKey = crypto.createSymmetricKey()
   t.type(symmetricKey, Buffer, 'symmetricKey is a Buffer')
-  t.equal(symmetricKey.length, 32, 'iv is 32 bytes long')
+  t.equal(symmetricKey.length, 32, 'symmetricKey is 32 bytes long')
   t.end()
 })
 

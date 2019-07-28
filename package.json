@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rm -rf .nyc_output coverage out.tap junit-testresults.xml",
     "test:lint": "eslint src",
-    "test:unit": "tap --no-esm -o out.tap",
+    "test:unit": "tap --no-esm -J src/**/*.test.js --cov --coverage-report=cobertura -o out.tap",
     "test:unit:junit": "tap-mocha-reporter xunit < out.tap > junit-testresults.xml",
     "test": "npm run test:lint && npm run test:unit && npm run test:unit:junit"
   },

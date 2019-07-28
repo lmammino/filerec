@@ -31,12 +31,12 @@ steps:
   displayName: "Publish Test Results"
   condition: succeededOrFailed()
   inputs:
-    testResultsFiles: "**/junit-testresults.xml"
+    testResultsFiles: "$(System.DefaultWorkingDirectory)/junit-testresults.xml"
     testRunTitle: TestRun Filerec on $(node_version)
 
 - task: PublishCodeCoverageResults@1
   displayName: "Publish code coverage results"
   condition: succeededOrFailed()
   inputs:
-    codeCoverageTool: "cobertura"
-    summaryFileLocation: "**/coverage/cobertura-coverage.xml"
+    codeCoverageTool: "Cobertura"
+    summaryFileLocation: "$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml"
