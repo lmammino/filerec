@@ -1,0 +1,44 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+strategy:
+  matrix:
+    node_12_x:
+      node_version: 12.x
+    node_11_x:
+      node_version: 11.x
+    node_10_x:
+      node_version: 10.x
+    node_8_x:
+      node_version: 8.x
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: $(node_version)
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'Install dependencies'
+
+- script: |
+    npm test
+  displayName: 'Run tests'
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: "**/junit-testresults.xml"
+    testRunTitle: TestRun ${{ parameters.name }} $(node_version)
+
+- task: PublishCodeCoverageResults@1
+  displayName: "Publish code coverage results"
+  condition: succeededOrFailed()
+  inputs:
+    codeCoverageTool: "cobertura"
+    summaryFileLocation: "**/coverage/cobertura-coverage.xml"

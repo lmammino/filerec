@@ -2,7 +2,7 @@
 
 const stream = require('stream')
 const tap = require('tap')
-const crypto = require('../crypto')
+const crypto = require('./crypto')
 
 tap.test('crypto.createKeyPair should create a keypair', (t) => {
   const { publicKey, privateKey, passphrase } = crypto.createKeyPair()

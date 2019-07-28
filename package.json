@@ -7,9 +7,11 @@
     "filerec": "src/cli.js"
   },
   "scripts": {
+    "clean": "rm -rf .nyc_output coverage out.tap junit-testresults.xml",
     "test:lint": "eslint src",
-    "test:unit": "tap -Rnyan",
-    "test": "npm run test:lint && npm run test:unit"
+    "test:unit": "tap --no-esm -o out.tap",
+    "test:unit:junit": "tap-mocha-reporter xunit < out.tap > junit-testresults.xml",
+    "test": "npm run test:lint && npm run test:unit && npm run test:unit:junit"
   },
   "keywords": [
     "http",
@@ -30,7 +32,9 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "tap": "^14.4.3"
+    "tap": "^14.4.3",
+    "tap-junit": "^3.1.0",
+    "tap-mocha-reporter": "^4.0.1"
   },
   "dependencies": {
     "enquirer": "^2.3.1",
