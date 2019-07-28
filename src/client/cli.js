@@ -1,10 +1,11 @@
 'use strict'
 
 const path = require('path')
+const ProgressBar = require('progress')
 const client = require('./')
 
 async function cmd (argv) {
-  console.log(argv)
+  const showProgressBar = !argv.noProgressBar
 
   let host = argv._[1]
   if (typeof host === 'undefined') {
@@ -23,12 +24,43 @@ async function cmd (argv) {
   }
   file = path.resolve(file)
 
-  // TODO use client function to send the file and show progress bar
-  console.log({ host, file })
-
   const transferStream = await client.sendFile(host, file)
 
-  transferStream.on('progress', (progress) => console.log('progress', progress, transferStream.size))
+  let bar = null
+
+  transferStream.on('error', (err) => {
+    if (bar) {
+      bar.interrupt(err)
+    } else {
+      console.error(err)
+    }
+    process.exit(1)
+  })
+
+  let previousTransfer = 0
+  console.log(`Transferring ${file}`)
+  if (showProgressBar) {
+    bar = new ProgressBar('Upload > :bar (:percent) - :rate/bps - :etas', {
+      total: transferStream.estimatedEncryptedSize,
+      width: 30,
+      complete: '█',
+      incomplete: '░'
+    })
+    transferStream.on('progress', (progress) => {
+      const tickSize = progress.transferred - previousTransfer
+      previousTransfer = progress.transferred
+      bar.tick(tickSize)
+    })
+  }
+
+  transferStream.once('finish', (resp) => {
+    if (bar) {
+      bar.tick(transferStream.estimatedEncryptedSize)
+    }
+    setImmediate(() => {
+      console.log('\nTransfer completed')
+    })
+  })
 }
 
 module.exports = {

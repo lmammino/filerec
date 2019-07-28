@@ -32,11 +32,11 @@ async function sendFile (server, file, options = {}) {
     httpStream
   )
 
-  // hack to make got understand the size of the file
-  request.size = size
+  // set the original size and estimatedEncryptedSize
+  request.originalSize = size
+  request.estimatedEncryptedSize = size + (16 - (size % 16))
 
-  // propagates http events
-  httpStream.on('request', (request) => request.emit('started', request))
+  // propagates http progress event
   httpStream.on('uploadProgress', (progress) => request.emit('progress', progress))
 
   return request
