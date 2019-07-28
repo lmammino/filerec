@@ -25,6 +25,10 @@
   ],
   "author": "Luciano Mammino",
   "license": "MIT",
+  "engines": {
+    "node" : ">=11.6.0"
+  },
+  "engineStrict": true,
   "devDependencies": {
     "eslint": "^6.1.0",
     "eslint-config-standard": "^13.0.1",
