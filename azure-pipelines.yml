@@ -23,6 +23,8 @@ steps:
 
 - script: |
     npm test
+  env:
+    COVERALLS_REPO_TOKEN: $(coveralls.token)
   displayName: 'Run tests'
 
 - task: PublishTestResults@2

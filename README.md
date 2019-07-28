@@ -4,6 +4,13 @@
 
 <p align="center"><strong>Local HTTP 1.1 server to securely receive files from friends and colleagues on the local network.</strong></p>
 
+<p align="center">
+  <a href="https://dev.azure.com/loige/loige/_build/latest"><img alt="Build Status" src="https://dev.azure.com/loige/loige/_apis/build/status/lmammino.filerec"/></a>
+  <a href=""></a>
+  <a href="https://badge.fury.io/js/filrerec"><img src="https://badge.fury.io/js/filrerec.svg" alt="npm version"></a>
+  <a href="https://coveralls.io/github/lmammino/filrerec"><img src="https://coveralls.io/repos/github/lmammino/filrerec/badge.svg" alt="Coverage Status"></a>
+</p>
+
 ...
 
 
