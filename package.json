@@ -36,7 +36,6 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "mockery": "^2.1.0",
     "proxyquire": "^2.1.1",
     "tap": "^14.4.3",
     "tap-mocha-reporter": "^4.0.1"
