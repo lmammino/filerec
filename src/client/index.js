@@ -38,13 +38,10 @@ async function sendFile (server, file, options = {}) {
 
   // propagates http progress event
   httpStream.on('uploadProgress', (progress) => request.emit('progress', progress))
+  httpStream.on('error', (err) => request.emit('error', err))
 
   return request
 }
-
-// function sendFiles (server, files, options = {}) {
-//
-// }
 
 module.exports = {
   sendFile

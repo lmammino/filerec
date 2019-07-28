@@ -5,7 +5,7 @@ const ProgressBar = require('progress')
 const client = require('./')
 
 async function cmd (argv) {
-  const showProgressBar = !argv.noProgressBar
+  const showProgressBar = argv.progressBar
 
   let host = argv._[1]
   if (typeof host === 'undefined') {
@@ -24,42 +24,48 @@ async function cmd (argv) {
   }
   file = path.resolve(file)
 
+  // start the file transfer
   const transferStream = await client.sendFile(host, file)
 
   let bar = null
-
-  transferStream.on('error', (err) => {
-    if (bar) {
-      bar.interrupt(err)
-    } else {
-      console.error(err)
-    }
-    process.exit(1)
-  })
-
   let previousTransfer = 0
+  function progressBarUpdate (progress) {
+    const tickSize = progress.transferred - previousTransfer
+    previousTransfer = progress.transferred
+    bar.tick(tickSize)
+  }
+
   console.log(`Transferring ${file}`)
   if (showProgressBar) {
-    bar = new ProgressBar('Upload > :bar (:percent) - :rate/bps - :etas', {
+    bar = new ProgressBar('Upload > :bar (:percent) - :etas', {
       total: transferStream.estimatedEncryptedSize,
       width: 30,
       complete: '█',
       incomplete: '░'
     })
-    transferStream.on('progress', (progress) => {
-      const tickSize = progress.transferred - previousTransfer
-      previousTransfer = progress.transferred
-      bar.tick(tickSize)
-    })
+    transferStream.on('progress', progressBarUpdate)
   }
 
   transferStream.once('finish', (resp) => {
     if (bar) {
       bar.tick(transferStream.estimatedEncryptedSize)
+      transferStream.removeListener('progress', progressBarUpdate)
     }
     setImmediate(() => {
       console.log('\nTransfer completed')
     })
+  })
+
+  transferStream.on('error', (err) => {
+    const errMessage = `Transfer failed: ${err.statusCode} ${err.statusMessage}`
+    if (bar) {
+      bar.interrupt(errMessage)
+      bar.clear = true
+      bar.terminate()
+    } else {
+      console.error(errMessage)
+    }
+    process.exit(1)
   })
 }
 
@@ -76,11 +82,11 @@ module.exports = {
       type: 'string'
     })
     .option(
-      'no-progress-bar', {
+      'progress-bar', {
         type: 'boolean',
         alias: 'P',
-        default: false,
-        describe: 'If set it will not display the progress bar'
+        default: true,
+        describe: 'If set it will display the progress bar. Use --no-progress-bar to disable.'
       }
     )
 }

@@ -95,7 +95,6 @@ async function createServer (opts = {}) {
       server.log.info(`${req.ip} connected. Trying to send ${filename}`)
       await options.accepter(options, req.ip, hasFilename, filename)
     } catch (notAcceptedError) {
-      console.error(notAcceptedError)
       reply.status(401)
       return new Error('Request reject or timed out')
     }
@@ -106,7 +105,6 @@ async function createServer (opts = {}) {
       reply.status(202)
       return { message: 'File received' }
     } catch (transferFailedError) {
-      console.error(transferFailedError)
       server.log.error(`File transfer failed: ${transferFailedError}`)
       reply.status(500)
       return new Error(`File transfer failed: ${transferFailedError}`)
