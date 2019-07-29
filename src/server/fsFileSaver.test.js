@@ -66,31 +66,31 @@ tap.test('fsFileSaver should reject if can\'t create the folder in the local fil
   t.end()
 })
 
-// tap.test('fsFileSaver should reject if can\'t write data in the local filesystem', async (t) => {
-//   const readableStreamMock = {
-//     pipeline () {
-//       const args = [...arguments]
-//       const cb = args.unshift() // callback is the last argument
-//       for (const stream of args) {
-//         stream.destroy() // cleans up the passed streams
-//       }
-//       return cb(new Error(`Can't write on the filesystem`))
-//     }
-//   }
-//
-//   const fileSaver = Proxyquire('./fsFileSaver', {
-//     'readable-stream': readableStreamMock
-//   })
-//
-//   const data = 'abcd'.repeat(10000)
-//
-//   const dataStream = createReadableFromString(data)
-//   const savePath = os.tmpdir()
-//   const filename = `filerec-test-file-${~~(Math.random() * 999999)}.txt`
-//
-//   await t.rejects(
-//     () => fileSaver(undefined, dataStream, savePath, filename),
-//     new Error(`Can't write on the filesystem`)
-//   )
-//   t.end()
-// })
+tap.test('fsFileSaver should reject if can\'t write data in the local filesystem', async (t) => {
+  const readableStreamMock = {
+    pipeline: function (stream1, stream2, cb) {
+      // cleans up the passed streams
+      stream1.destroy()
+      stream2.destroy()
+      // fakes an error by invoking the callback
+      return cb(new Error(`Can't write on the filesystem`))
+    }
+  }
+  readableStreamMock.pipeline['@global'] = true
+
+  const fileSaver = Proxyquire('./fsFileSaver', {
+    'readable-stream': readableStreamMock
+  })
+
+  const data = 'abcd'.repeat(10000)
+
+  const dataStream = createReadableFromString(data)
+  const savePath = os.tmpdir()
+  const filename = `filerec-test-file-${~~(Math.random() * 999999)}.txt`
+
+  await t.rejects(
+    () => fileSaver(undefined, dataStream, savePath, filename),
+    new Error(`Can't write on the filesystem`)
+  )
+  t.end()
+})
