@@ -67,6 +67,6 @@ tap.test('promptAccepter should resolve to false when prompt is NOT accepted', a
   const promptAccepter = Proxyquire('./promptAccepter', { enquirer: enquirerMock })
   const promptPromise = promptAccepter(undefined, '168.2.10.17', true, 'someFile.js')
 
-  t.rejects(promptPromise, new Error('Transfer rejected'), 'Prompt not accepted should reject')
+  await t.rejects(promptPromise, new Error('Transfer rejected'), 'Prompt not accepted should reject')
   t.end()
 })

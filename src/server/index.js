@@ -1,53 +1,25 @@
 'use strict'
 
 const os = require('os')
-const fs = require('fs')
 const path = require('path')
 const Fastify = require('fastify')
 const pointOfView = require('point-of-view')
 const fastifyStatic = require('fastify-static')
 const nunjucks = require('nunjucks')
-const { pipeline } = require('readable-stream')
-const mkdirp = require('mkdirp')
+const pumpify = require('pumpify')
 const crypto = require('../utils/crypto')
+const fileSaver = require('./fsFileSaver')
 
 const defaultOptions = {
   accepter: () => Promise.resolve(),
-  fileSaver: (options, req, savePath, fileName, sealedKey, privateKey, passphrase, iv) => new Promise((resolve, reject) => {
-    pipeline(
-      req.raw,
-      crypto.createDecipherStream(sealedKey, privateKey, passphrase, iv),
-      fs.createWriteStream(path.join(savePath, fileName)),
-      (err) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve()
-      }
-    )
-  }),
+  fileSaver: fileSaver,
   logger: true,
   serverName: os.hostname(),
   savePath: path.resolve(path.join(process.cwd(), 'received-files'))
 }
 
-function createSavePath (savePath) {
-  return new Promise((resolve, reject) => {
-    mkdirp(savePath, (err) => {
-      if (err) {
-        return reject(err)
-      }
-
-      return resolve()
-    })
-  })
-}
-
 async function createServer (opts = {}) {
   const options = Object.assign({}, defaultOptions, opts)
-
-  await createSavePath(options.savePath)
 
   const { publicKey, privateKey, passphrase } = crypto.createKeyPair()
 
@@ -100,7 +72,12 @@ async function createServer (opts = {}) {
     }
 
     try {
-      await options.fileSaver(options, req, options.savePath, filename, sealedKey, privateKey, passphrase, iv)
+      const dataStream = pumpify(
+        req.raw,
+        crypto.createDecipherStream(sealedKey, privateKey, passphrase, iv)
+      )
+
+      await options.fileSaver(options, dataStream, options.savePath, filename)
       server.log.info(`File saved in ${path.resolve(path.join(options.savePath, filename))}`)
       reply.status(202)
       return { message: 'File received' }

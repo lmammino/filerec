@@ -2,6 +2,7 @@
   "name": "filerec",
   "version": "1.0.0",
   "description": "Local HTTP 1.1 server to securely receive files from friends and colleagues on the local network",
+  "repository": "https://github.com/lmammino/filerec",
   "main": "src/server",
   "bin": {
     "filerec": "src/cli.js"
