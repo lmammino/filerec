@@ -5,8 +5,7 @@
 const assert = require('assert')
 const PinoColada = require('pino-colada')
 const { pipeline } = require('readable-stream')
-
-const createServer = require('./')
+const createServer = require('./index')
 const promptAccepter = require('./promptAccepter')
 
 async function cmd (argv) {
@@ -19,14 +18,12 @@ async function cmd (argv) {
 }
 
 async function startServer (opts) {
-  opts.port = opts.port || process.env.PORT || 0
+  opts.port = opts.port || 0
 
   const options = {
     logger: {
-      level: opts.logLevel
-    },
-
-    pluginTimeout: opts.pluginTimeout
+      level: opts.logLevel || 'info'
+    }
   }
 
   if (opts.bodyLimit) {
