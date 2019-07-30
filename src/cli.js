@@ -2,14 +2,19 @@
 
 'use strict'
 
-const createServer = require('./server')
-const promptAccepter = require('./promptAccepter')
+const yargs = require('yargs')
+const updateNotifier = require('update-notifier')
+const pkg = require('../package.json')
+const server = require('./server/cli')
+const client = require('./client/cli')
 
-const server = createServer({
-  accepter: promptAccepter
-})
+updateNotifier({ pkg }).notify()
 
-server.on('listening', () => {
-  console.log(`Listening on port ${server.address().port}`)
-})
-server.listen({ host: '0.0.0.0', port: 0 })
+yargs
+  .version()
+  .usage('$0 <command> [options]')
+  .command(['server', 'start', 'start-server', 's'], 'start a local filerec server', server)
+  .command(['send', 'client', 'send-file', 'f'], 'send a file to a given filerec server', client)
+  .help('h')
+  .alias('h', 'help')
+  .parse()
